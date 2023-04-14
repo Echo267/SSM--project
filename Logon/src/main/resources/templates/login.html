@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登陆</title>
+</head>
+<link rel="stylesheet" href="/css/login.css">
+<body>
+<div class="main">
+    <div class="title">
+        <span>用户登陆</span>
+    </div>
+
+    <div class="title-msg">
+        <span>请输入登录账户和密码</span>
+    </div>
+
+    <form class="login-form" action="/user/API/login" th:object="${user}" method="post" name="user">
+        <!--输入框-->
+        <div class="input-content">
+            <!--autoFocus-->
+            <div>
+                <input type="text" autocomplete="off" placeholder="用户名" name="userName" />
+            </div>
+            <div th:classappend="${#fields.hasErrors('userName')} ? 'error' : ''">
+                <p th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></p>
+            </div>
+            <div>
+                <input type="password" autocomplete="off" placeholder="密码" name="userPwd" />
+            </div>
+            <div th:classappend="${#fields.hasErrors('userPwd')} ? 'error' : ''">
+                <p th:if="${#fields.hasErrors('userPwd')}" th:errors="*{userPwd}"></p>
+            </div>
+            <div   th:classappend="${isSuccess} ? 'error-message':''" >
+
+            </div>
+
+        <!--登入按钮-->
+        <div>
+            <button type="submit" class="enter-btn"  >登录</button>
+        </div>
+
+        <div class="foor">
+            <div class="left"><span>忘记密码 ?</span></div>
+
+            <div class="right"><a href="/user/register">注册账户</a></div>
+        </div>
+        </div>
+  </form>
+
+</div>
+
+
+</body>
+<script>
+
+
+
+
+    let element_submit = document.querySelector('.enter-btn');
+    const errorMessage = document.querySelector('.error-message');
+    //获取表单标签
+    const form = document.querySelector('form');
+        //表单提交事件
+        form.addEventListener('submit', function (event) {
+           // event.preventDefault();  // 防止表单提交默认行为
+
+            const formData = new FormData(form);  // 构造表单数据
+            console.log(formData);
+            console.log(errorMessage.textContent);
+
+            // 发送POST请求
+            receive (formData);
+
+
+        });
+
+        function receive (formData) {
+
+            fetch('/user/API/login', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+
+                    if (errorMessage) {
+                        // 登录成功，重定向到主界面
+                        console.log(errorMessage.textContent);
+                        alert("登陆成功");
+
+                        //跳转到后端的@PostMappin（‘/user/userMain’）路径
+                       // window.location.href ='/user/userMain';
+                    } else {
+
+                        console.log(errorMessage.textContent);
+                        // 登录失败，弹出错误提示
+                        alert('登录失败，请检查用户名和密码是否正确！');
+                        window.location.href ='/user/login';
+
+                    }
+                })
+                .catch(error => {
+
+                    console.error('登录请求出错：', error);
+                });
+
+        }
+
+
+
+
+</script>
+</html>
